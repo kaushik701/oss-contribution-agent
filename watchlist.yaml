@@ -1,0 +1,159 @@
+# Watchlist — AI/ML projects to scout for contribution opportunities.
+#
+# Each entry has:
+#   - repo: GitHub "owner/name"
+#   - priority: high | medium | low (affects ranking weight)
+#   - good_labels: GitHub labels that signal "newcomer welcome"
+#   - skip_labels: labels that signal "stay away" (claimed, stale, dispute, etc.)
+#   - notes: project-specific contribution etiquette the agent must respect
+#
+# CONTRIBUTION ETIQUETTE PRINCIPLES (apply to all):
+#   1. NEVER auto-submit PRs. The agent drafts; the human submits.
+#   2. NEVER comment on issues from this agent. Human handles all maintainer interaction.
+#   3. For LangChain: confirm maintainer-approved solution exists before drafting.
+#   4. For FastMCP: bias toward bug fixes and docs, not new features.
+#   5. Low-effort filter: if a fix is <5 LOC + docs only, skip unless explicitly typo/grammar.
+#   6. Always check the issue is not already claimed (search comments for "I'll work on this").
+
+repositories:
+  # ─── Tier 1: AI agents / orchestration ────────────────────────────────
+  - repo: "langchain-ai/langchain"
+    priority: high
+    good_labels: ["help wanted", "good first issue", "documentation"]
+    skip_labels: ["wontfix", "duplicate", "needs-triage", "🤖:question"]
+    notes: |
+      Strict policy: PRs require maintainer-approved solution on the issue first.
+      Read the latest comments on any issue before drafting. New integrations
+      are NOT accepted — they go to community packages.
+
+  - repo: "langchain-ai/langgraph"
+    priority: high
+    good_labels: ["help wanted", "good first issue", "documentation"]
+    skip_labels: ["wontfix", "duplicate"]
+    notes: "LangGraph is newer; bug fixes and doc improvements are most welcome."
+
+  - repo: "run-llama/llama_index"
+    priority: high
+    good_labels: ["good first issue", "help wanted", "documentation"]
+    skip_labels: ["wontfix", "stale"]
+    notes: "Moves fast. Check the issue isn't already addressed in a recent PR."
+
+  # ─── Tier 2: MCP ecosystem ────────────────────────────────────────────
+  - repo: "jlowin/fastmcp"
+    priority: high
+    good_labels: ["good first issue", "help wanted", "bug", "documentation"]
+    skip_labels: ["wontfix", "out-of-scope"]
+    notes: |
+      Framework philosophy: features are rejected when they don't align with vision.
+      Bias toward bug fixes and docs. Burden of proof is on the PR to demonstrate value.
+
+  - repo: "modelcontextprotocol/python-sdk"
+    priority: high
+    good_labels: ["good first issue", "help wanted", "bug"]
+    skip_labels: ["wontfix"]
+    notes: "Official MCP SDK; code quality bar is high. Bug fixes are best target."
+
+  - repo: "modelcontextprotocol/typescript-sdk"
+    priority: medium
+    good_labels: ["good first issue", "help wanted", "bug"]
+    skip_labels: ["wontfix"]
+    notes: "TypeScript only — skip unless you're comfortable in TS."
+
+  - repo: "modelcontextprotocol/servers"
+    priority: medium
+    good_labels: ["good first issue", "help wanted", "bug"]
+    skip_labels: ["wontfix"]
+    notes: "Reference MCP servers. Good for understanding patterns."
+
+  # ─── Tier 3: RAG and vector DBs ───────────────────────────────────────
+  - repo: "chroma-core/chroma"
+    priority: medium
+    good_labels: ["good first issue", "help wanted", "documentation"]
+    skip_labels: ["wontfix", "stale"]
+    notes: "Vector DB you've used in DiVA. Bug fixes and docs welcome."
+
+  - repo: "qdrant/qdrant-client"
+    priority: medium
+    good_labels: ["good first issue", "help wanted", "documentation"]
+    skip_labels: ["wontfix"]
+    notes: "Python client; Rust core is harder."
+
+  - repo: "weaviate/weaviate-python-client"
+    priority: low
+    good_labels: ["good first issue", "help wanted", "documentation"]
+    skip_labels: ["wontfix"]
+    notes: "Python client only."
+
+  # ─── Tier 4: Evals and observability ──────────────────────────────────
+  - repo: "confident-ai/deepeval"
+    priority: high
+    good_labels: ["good first issue", "help wanted", "bug", "documentation"]
+    skip_labels: ["wontfix"]
+    notes: |
+      You're using DeepEval in your own projects. High value: contributing here
+      means deep familiarity with the eval tools every AI Eng JD asks about.
+
+  - repo: "UKGovernmentBEIS/inspect_ai"
+    priority: medium
+    good_labels: ["good first issue", "help wanted", "documentation"]
+    skip_labels: ["wontfix"]
+    notes: "UK AI Safety Institute. High-quality codebase. Docs are good entry point."
+
+  - repo: "langfuse/langfuse"
+    priority: medium
+    good_labels: ["good first issue", "help wanted", "documentation"]
+    skip_labels: ["wontfix"]
+    notes: "Mostly TypeScript. Skip unless TS is comfortable."
+
+  - repo: "Arize-ai/phoenix"
+    priority: medium
+    good_labels: ["good first issue", "help wanted", "bug", "documentation"]
+    skip_labels: ["wontfix"]
+    notes: "Observability platform; Python + TS. Python parts are accessible."
+
+  # ─── Tier 5: Model serving / inference ────────────────────────────────
+  - repo: "vllm-project/vllm"
+    priority: low
+    good_labels: ["good first issue", "help wanted", "documentation"]
+    skip_labels: ["wontfix", "stale"]
+    notes: |
+      High-profile but very deep codebase. Docs improvements only unless
+      you're prepared for a multi-week PR review cycle.
+
+  - repo: "huggingface/transformers"
+    priority: low
+    good_labels: ["Good First Issue", "Good Second Issue", "documentation"]
+    skip_labels: ["wontfix", "stale"]
+    notes: "Massive codebase. Doc fixes only for early contributions."
+
+  # ─── Tier 6: Adjacent tooling you use ────────────────────────────────
+  - repo: "pydantic/pydantic-ai"
+    priority: medium
+    good_labels: ["good first issue", "help wanted", "documentation"]
+    skip_labels: ["wontfix"]
+    notes: "Pydantic AI is newer; good chance of finding fresh issues."
+
+  - repo: "promptfoo/promptfoo"
+    priority: low
+    good_labels: ["good first issue", "help wanted", "documentation"]
+    skip_labels: ["wontfix"]
+    notes: "Eval tool. TypeScript-heavy."
+
+# Default settings for issue scoring (can be tuned over time)
+scoring:
+  max_issues_per_report: 5
+  draft_top_n: 2  # Generate full code patches for the top N ranked issues
+  recency_window_days: 30  # Issues opened/updated in this window get a boost
+  staleness_skip_days: 90  # Issues older than this with no activity are skipped
+
+# Weights for the ranking function
+weights:
+  label_match: 3.0       # has "good first issue" or "help wanted"
+  priority_high: 2.0
+  priority_medium: 1.0
+  priority_low: 0.5
+  recent_activity: 2.0   # commented/updated within recency_window_days
+  no_existing_pr: 2.0    # no linked PR yet
+  skill_match: 3.0       # mentions Python, RAG, MCP, agents, evals in title/body
+  low_effort_penalty: -2.0  # if estimated as too small (typo only)
+  high_complexity_penalty: -1.5  # if estimated as huge refactor

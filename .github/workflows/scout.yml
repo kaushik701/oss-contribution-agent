@@ -1,0 +1,76 @@
+name: Daily OSS Scout
+
+on:
+  schedule:
+    # 8 AM Pacific = 15:00 UTC (PDT) / 16:00 UTC (PST)
+    # Run twice; in-app dedup prevents double-sends.
+    - cron: "0 15 * * *"
+    - cron: "0 16 * * *"
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Generate but do not send"
+        required: false
+        default: "false"
+      mode:
+        description: "scout (no drafts) or full"
+        required: false
+        default: "full"
+      skip_drafts:
+        description: "Skip code patch generation"
+        required: false
+        default: "false"
+      skip_reviews:
+        description: "Skip PR review mode"
+        required: false
+        default: "false"
+
+jobs:
+  scout:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run scout
+        env:
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          GROQ_MODEL: ${{ secrets.GROQ_MODEL }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GMAIL_ADDRESS: ${{ secrets.GMAIL_ADDRESS }}
+          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+          RECIPIENT_EMAIL: ${{ secrets.RECIPIENT_EMAIL }}
+          SENDER_NAME: ${{ secrets.SENDER_NAME }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        run: |
+          FLAGS="--mode=${{ github.event.inputs.mode || 'full' }}"
+          if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then FLAGS="$FLAGS --dry-run"; fi
+          if [ "${{ github.event.inputs.skip_drafts }}" = "true" ]; then FLAGS="$FLAGS --skip-drafts"; fi
+          if [ "${{ github.event.inputs.skip_reviews }}" = "true" ]; then FLAGS="$FLAGS --skip-reviews"; fi
+          python -m src.main $FLAGS
+
+      - name: Commit report + drafts + state
+        if: github.event.inputs.dry_run != 'true'
+        run: |
+          git config user.name "oss-scout[bot]"
+          git config user.email "oss-scout@users.noreply.github.com"
+          git add data/ examples/reports/ examples/drafts/ || true
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+          else
+            git commit -m "report: $(date -u +%Y-%m-%d) scout run"
+            git push
+          fi

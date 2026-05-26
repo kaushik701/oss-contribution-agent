@@ -1,0 +1,77 @@
+# Your skills profile. The agent uses this to match issues to your strengths.
+# Edit this freely - the more accurate it is, the better the issue matches.
+
+candidate:
+  name: "Kaushik"
+  github_username: "YOUR_GITHUB_USERNAME"  # IMPORTANT: change this!
+
+# Skills the agent will look for in issue titles/bodies. Higher confidence = higher boost.
+skills:
+  proficient:  # weight 1.0
+    - "Python"
+    - "RAG"
+    - "FAISS"
+    - "ChromaDB"
+    - "embeddings"
+    - "vector search"
+    - "LangChain"
+    - "multi-agent"
+    - "prompt engineering"
+    - "Pydantic"
+    - "pytest"
+
+  intermediate:  # weight 0.7
+    - "LangGraph"
+    - "LlamaIndex"
+    - "FastAPI"
+    - "SQLite"
+    - "tokenization"
+    - "evals"
+    - "DeepEval"
+    - "RAG evaluation"
+
+  learning:  # weight 0.4 — flag these as growth opportunities
+    - "MCP"
+    - "FastMCP"
+    - "Streamable HTTP"
+    - "OAuth"
+    - "Cloudflare Workers"
+    - "Langfuse"
+    - "observability"
+    - "OpenTelemetry"
+
+  awareness_only:  # weight 0.1 — only flag if perfect fit
+    - "CUDA"
+    - "vLLM"
+    - "model serving"
+    - "Kubernetes"
+    - "AWS Bedrock"
+
+# Hard exclusions — never recommend issues primarily in these areas
+exclusions:
+  - "TypeScript only"
+  - "Rust core"
+  - "C++ core"
+  - "Go"
+  - "frontend / React UI"
+  - "mobile (Swift / Kotlin)"
+
+# Preferences that shape which issues land in the daily report
+preferences:
+  # Estimated time the contribution should take (you have ~2 hrs/day for this)
+  preferred_effort: ["30min - 2hrs", "2hrs - half-day"]
+  avoid_effort: ["multi-day refactor", "RFC / design discussion"]
+
+  # Issue types you want to focus on (in order of preference)
+  preferred_types:
+    - "bug fix with reproducible example"
+    - "documentation improvement with concrete proposal"
+    - "missing test coverage on existing feature"
+    - "small feature with maintainer-approved design"
+    - "type hint / mypy fix"
+
+  avoid_types:
+    - "feature request without maintainer approval"
+    - "RFC discussion"
+    - "performance optimization without benchmarks"
+    - "anything labeled wontfix or out-of-scope"
