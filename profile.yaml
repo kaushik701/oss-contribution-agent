@@ -3,7 +3,7 @@
 
 candidate:
   name: "Kaushik"
-  github_username: "YOUR_GITHUB_USERNAME"  # IMPORTANT: change this!
+  github_username: "kaushik701"  # IMPORTANT: change this!
 
 # Skills the agent will look for in issue titles/bodies. Higher confidence = higher boost.
 skills:
